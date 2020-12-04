@@ -19,6 +19,9 @@ function RightMenu(props) {
     });
   };
 
+  /*
+    로그인이 안 된 상태의 Right Menu 상태!
+  */
   if (user.userData && !user.userData.isAuth) {
     return (
       <Menu mode={props.mode}>
@@ -30,9 +33,16 @@ function RightMenu(props) {
         </Menu.Item>
       </Menu>
     )
-  } else {
+  } 
+  /*
+    로그인 된 상태의 Right Menu 상태!
+  */
+  else {
     return (
       <Menu mode={props.mode}>
+        <Menu.Item key="upload">
+          <a href='/product/upload'>Upload</a>
+        </Menu.Item>
         <Menu.Item key="logout">
           <a onClick={logoutHandler}>Logout</a>
         </Menu.Item>
