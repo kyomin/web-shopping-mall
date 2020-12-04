@@ -1,17 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { Typography, Button, Form, Input } from 'antd';
+import FileUpload from '../../utils/FileUpload';
 
 const { Title } = Typography;
 const { TextArea } = Input;
-
 const continents = [
-    { key: 1, value: "Africa" },
-    { key: 2, value: "Europe" },
-    { key: 3, value: "Asia" },
-    { key: 4, value: "North America" },
-    { key: 5, value: "South America" },
-    { key: 6, value: "Australia" },
-    { key: 7, value: "Antarctica" }
+    { key: 1, value: 'Africa' },
+    { key: 2, value: 'Europe' },
+    { key: 3, value: 'Asia' },
+    { key: 4, value: 'North America' },
+    { key: 5, value: 'South America' },
+    { key: 6, value: 'Australia' },
+    { key: 7, value: 'Antarctica' }
 ];
 
 function UploadProductPage() {
@@ -46,6 +46,8 @@ function UploadProductPage() {
           <Form>
 
               {/* DropZone */}
+              <FileUpload />
+
               <br/>
               <br/>
               <label>이름</label>
@@ -59,7 +61,7 @@ function UploadProductPage() {
               <br/>
               <br/>
               <label>가격</label>
-              <Input type="number" onChange={priceChangeHandler} value={price} />
+              <Input type='number' onChange={priceChangeHandler} value={price} />
 
               <br/>
               <br/>
@@ -77,7 +79,7 @@ function UploadProductPage() {
 
           </Form>
         </div>
-    )
+    );
 }
 
 export default UploadProductPage
