@@ -3,7 +3,7 @@ import Dropzone from 'react-dropzone';
 import { Icon } from 'antd';
 import axios from 'axios';
 
-function FileUpload() {
+function FileUpload(props) {
     const [images, setImages] = useState([]);
 
     const dropHandler = (files) => {
@@ -18,6 +18,7 @@ function FileUpload() {
         .then((res) =>{
             if(res.data.success){
                 setImages([...images, res.data.filePath]);
+                props.refreshFunction([...images, res.data.filePath]);
             } else {
                 alert('이미지 파일을 서버에 저장하는데 실패했습니다.');
             }
@@ -32,6 +33,7 @@ function FileUpload() {
         newImages.splice(idx, 1);       // 클릭된 특정 인덱스의 원소를 지운다.
         
         setImages(newImages);
+        props.refreshFunction(newImages);
     }
 
     return (
