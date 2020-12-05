@@ -27,6 +27,13 @@ function FileUpload() {
         })
     }
 
+    const deleteHandler = (idx) => {
+        const newImages = [...images];  // 기존의 이미지 리스트를 복사하고
+        newImages.splice(idx, 1);       // 클릭된 특정 인덱스의 원소를 지운다.
+        
+        setImages(newImages);
+    }
+
     return (
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Dropzone onDrop={dropHandler}>
@@ -47,7 +54,7 @@ function FileUpload() {
             <div style={{ display: 'flex', width: '350px', height: '240px', overflow: 'scroll' }}>
                 {images.map((image, idx) => {
                     return (
-                        <div key={idx}>
+                        <div onClick={() => deleteHandler(idx)} key={idx}>
                             <img 
                                 style={{ minWidth: '300px', width: '300px', height: '240px' }}
                                 src={`http://localhost:5000/${image}`}
