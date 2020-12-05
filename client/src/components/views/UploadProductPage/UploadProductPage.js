@@ -1,25 +1,26 @@
 import React, { useState } from 'react';
 import { Typography, Button, Form, Input } from 'antd';
 import axios from 'axios';
+import swal from 'sweetalert';
 import FileUpload from '../../utils/FileUpload';
 
 const { Title } = Typography;
 const { TextArea } = Input;
-const continents = [
-    { key: 1, value: 'Africa' },
-    { key: 2, value: 'Europe' },
-    { key: 3, value: 'Asia' },
-    { key: 4, value: 'North America' },
-    { key: 5, value: 'South America' },
-    { key: 6, value: 'Australia' },
-    { key: 7, value: 'Antarctica' }
+const classifications = [
+    { key: 1, value: '패션의류ㆍ잡화ㆍ뷰티' },
+    { key: 2, value: '식품ㆍ생필품' },
+    { key: 3, value: '컴퓨터ㆍ디지털ㆍ가전' },
+    { key: 4, value: '스포츠ㆍ건강ㆍ렌탈' },
+    { key: 5, value: '자동차ㆍ공구' },
+    { key: 6, value: '여행ㆍ도서ㆍ티켓ㆍe쿠폰' },
+    { key: 7, value: '홈데코ㆍ문구ㆍ취미ㆍ반려' }
 ];
 
 function UploadProductPage(props) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState(0);
-    const [continent, setContinent] = useState(1);
+    const [classification, setClassification] = useState(1);
     const [images, setImages] = useState([]);
 
     const titleChangeHandler = (e) => {
@@ -34,8 +35,8 @@ function UploadProductPage(props) {
         setPrice(e.currentTarget.value);
     }
 
-    const continentChangeHandler = (e) => {
-        setContinent(e.currentTarget.value);
+    const classificationChangeHandler = (e) => {
+        setClassification(e.currentTarget.value);
     }
 
     const updateImages = (newImages) => {
@@ -46,8 +47,9 @@ function UploadProductPage(props) {
         e.preventDefault();
 
         /* validation check! */
-        if(!title || !description || !price || !continent || !images){
-            return alert("모든 값을 채워 넣어주셔야 합니다!");
+        if(!title || !description || !price || !classification || !images){
+            swal('', '모든 값을 채워 넣어주셔야 합니다!', 'error');
+            return;
         }
 
         /* 채운 값들을 서버에 보낸다. */
@@ -56,23 +58,25 @@ function UploadProductPage(props) {
             writer: props.user.userData._id,
             title,
             description,
-            price,
-            continent,
+            price: price,
+            classification,
             images
         };
         
         axios.post("/api/product", requestData)
         .then((res) => {
             if(res.data.success){
-                alert('상품 업로드에 성공했습니다.');
-                props.history.push('/');
+                swal('', '상품 업로드에 성공했습니다.', 'success')
+                .then(() => {
+                    props.history.push('/');
+                });
             } else {
-                alert('상품 업로드에 실패했습니다.');
+                swal('', '상품 업로드에 실패했습니다.', 'error');
             }
         })
         .catch((err) => {
             console.error(err);
-            alert('상품 업로드에 실패했습니다.');
+            swal('', '상품 업로드에 실패했습니다.', 'error');
         });
     }
 
@@ -99,13 +103,13 @@ function UploadProductPage(props) {
               
               <br/>
               <br/>
-              <label>가격($)</label>
+              <label>가격(원)</label>
               <Input type='number' onChange={priceChangeHandler} value={price} required />
 
               <br/>
               <br/>
-              <select onChange={continentChangeHandler} value={continent}>
-                {continents.map((item) => {
+              <select onChange={classificationChangeHandler} value={classification}>
+                {classifications.map((item) => {
                     return <option key={item.key} value={item.key}>{item.value}</option>
                 })}
               </select>
