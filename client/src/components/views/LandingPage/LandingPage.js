@@ -1,15 +1,22 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import swal from 'sweetalert';
+import { Typography, Icon, Col, Card, Row } from 'antd';
+import Meta from 'antd/lib/card/Meta';
+import { BACK_URL } from '../../../utils/constants';
+import { numberWith3digitCommas } from '../../../utils/functions';
+
+const { Title } = Typography;
 
 function LandingPage() {
+    const [products, setProducts] = useState([]);
 
     useEffect(() => {
 
         axios.post('/api/product/products')
         .then((res) => {
             if(res.data.success){
-                console.log("landing data : ", res.data);
+                setProducts(res.data.productInfos);
             } else{
                 swal('', '상품 정보들을 가져오는데 실패 했습니다.', 'error');
             }
@@ -17,13 +24,48 @@ function LandingPage() {
         .catch((err) => {
             console.error(err);
             swal('', '상품 정보들을 가져오는데 실패 했습니다.', 'error');
-        })
+        });
 
     }, []);
 
+    const renderProducts = () => {
+        return products.map((product, idx) => {
+            return (
+                <Col lg={6} md={8} xs={24} key={idx}>
+                    <Card
+                        cover={<img 
+                            style={{ width: '100%', maxHeight: '150px' }}
+                            src={`${BACK_URL}/${product.images[0]}`} 
+                        />}
+                    >
+                        <Meta 
+                            title={product.title}
+                            description={`${numberWith3digitCommas(product.price)}원`}
+                        />
+                    </Card>
+                </Col>
+            );
+        });
+    }
+
     return (
-        <div>
-            Landing Page
+        <div style={{ width: '75%', margin: '3rem auto' }} >
+            <div style={{ textAlign: 'center' }}>
+                <Title level={2}> All Products <Icon type='rocket' /> </Title>
+            </div>
+
+            {/* Filter */}
+
+            {/* Search */}
+
+            {/* Cards */}
+            <Row gutter={[16, 16]}>
+                {renderProducts()}
+            </Row>
+
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <button>더보기</button>
+            </div>
         </div>
     );
 }

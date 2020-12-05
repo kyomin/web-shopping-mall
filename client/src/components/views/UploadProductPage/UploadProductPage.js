@@ -47,7 +47,7 @@ function UploadProductPage(props) {
         e.preventDefault();
 
         /* validation check! */
-        if(!title || !description || !price || !classification || !images){
+        if(!title || !description || !price || !classification || !images.length){
             swal('', '모든 값을 채워 넣어주셔야 합니다!', 'error');
             return;
         }
@@ -83,7 +83,7 @@ function UploadProductPage(props) {
     return (
         <div style={{ maxWidth: '700px', margin: '2rem auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-              <Title level={2}> 여행 상품 업로드 </Title>
+              <Title level={2}> 상품 업로드 </Title>
           </div>
 
           <Form onSubmit={submitHandler}>
@@ -107,6 +107,8 @@ function UploadProductPage(props) {
               <Input type='number' onChange={priceChangeHandler} value={price} required />
 
               <br/>
+              <br/>
+              <label>분류</label>
               <br/>
               <select onChange={classificationChangeHandler} value={classification}>
                 {classifications.map((item) => {
