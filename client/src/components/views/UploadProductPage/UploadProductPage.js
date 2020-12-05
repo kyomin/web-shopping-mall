@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Typography, Button, Form, Input } from 'antd';
+import axios from 'axios';
 import FileUpload from '../../utils/FileUpload';
 
 const { Title } = Typography;
@@ -14,7 +15,7 @@ const continents = [
     { key: 7, value: 'Antarctica' }
 ];
 
-function UploadProductPage() {
+function UploadProductPage(props) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState(0);
@@ -41,13 +42,47 @@ function UploadProductPage() {
         setImages(newImages);
     }
 
+    const submitHandler = (e) => {
+        e.preventDefault();
+
+        /* validation check! */
+        if(!title || !description || !price || !continent || !images){
+            return alert("모든 값을 채워 넣어주셔야 합니다!");
+        }
+
+        /* 채운 값들을 서버에 보낸다. */
+        const requestData = {
+            // 로그인 된 사람의 ID 정보
+            writer: props.user.userData._id,
+            title,
+            description,
+            price,
+            continent,
+            images
+        };
+        
+        axios.post("/api/product", requestData)
+        .then((res) => {
+            if(res.data.success){
+                alert('상품 업로드에 성공했습니다.');
+                props.history.push('/');
+            } else {
+                alert('상품 업로드에 실패했습니다.');
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+            alert('상품 업로드에 실패했습니다.');
+        });
+    }
+
     return (
         <div style={{ maxWidth: '700px', margin: '2rem auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
               <Title level={2}> 여행 상품 업로드 </Title>
           </div>
 
-          <Form>
+          <Form onSubmit={submitHandler}>
 
               {/* DropZone */}
               <FileUpload refreshFunction={updateImages}/>
@@ -55,17 +90,17 @@ function UploadProductPage() {
               <br/>
               <br/>
               <label>이름</label>
-              <Input onChange={titleChangeHandler} value={title}/>
+              <Input onChange={titleChangeHandler} value={title} required />
               
               <br/>
               <br/>
               <label>설명</label>
-              <TextArea onChange={descriptionChangeHandler} value={description} />
+              <TextArea onChange={descriptionChangeHandler} value={description} required />
               
               <br/>
               <br/>
-              <label>가격</label>
-              <Input type='number' onChange={priceChangeHandler} value={price} />
+              <label>가격($)</label>
+              <Input type='number' onChange={priceChangeHandler} value={price} required />
 
               <br/>
               <br/>
@@ -77,7 +112,7 @@ function UploadProductPage() {
 
               <br/>
               <br/>
-              <Button>
+              <Button htmlType='submit'>
                   확인
               </Button>
 

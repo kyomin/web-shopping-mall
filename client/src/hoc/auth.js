@@ -32,11 +32,12 @@ export default function (SpecificComponent, option, adminRoute = null) {
                 }
             })
 
-        }, [])
+        }, []);
 
         return (
+            // 검증을 통과한 모든 컴포넌트에 props로 user 정보를 넘기고 있다.
             <SpecificComponent {...props} user={user} />
-        )
+        );
     }
     return AuthenticationCheck
 }

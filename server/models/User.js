@@ -33,8 +33,7 @@ const userSchema = mongoose.Schema({
     tokenExp :{
         type: Number
     }
-})
-
+});
 
 userSchema.pre('save', function( next ) {
     var user = this;
