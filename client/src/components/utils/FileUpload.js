@@ -3,6 +3,7 @@ import Dropzone from 'react-dropzone';
 import { Icon } from 'antd';
 import axios from 'axios';
 import swal from 'sweetalert';
+import { BACK_URL } from '../../utils/constants';
 
 function FileUpload(props) {
     const [images, setImages] = useState([]);
@@ -60,7 +61,7 @@ function FileUpload(props) {
                         <div onClick={() => deleteHandler(idx)} key={idx}>
                             <img 
                                 style={{ minWidth: '300px', width: '300px', height: '240px' }}
-                                src={`http://localhost:5000/${image}`}
+                                src={`${BACK_URL}/${image}`}
                             />
                         </div>
                     );

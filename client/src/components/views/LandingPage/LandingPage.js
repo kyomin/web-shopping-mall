@@ -1,16 +1,31 @@
-import React from 'react'
-import { FaCode } from "react-icons/fa";
+import React, { useEffect } from 'react'
+import axios from 'axios';
+import swal from 'sweetalert';
 
 function LandingPage() {
+
+    useEffect(() => {
+
+        axios.post('/api/product/products')
+        .then((res) => {
+            if(res.data.success){
+                console.log("landing data : ", res.data);
+            } else{
+                swal('', '상품 정보들을 가져오는데 실패 했습니다.', 'error');
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+            swal('', '상품 정보들을 가져오는데 실패 했습니다.', 'error');
+        })
+
+    }, []);
+
     return (
-        <>
-            <div className="app">
-                <FaCode style={{ fontSize: '4rem' }} /><br />
-                <span style={{ fontSize: '2rem' }}>Let's Start Coding!</span>
-            </div>
-            <div style={{ float: 'right' }}>Thanks For Using This Boiler Plate by John Ahn</div>
-        </>
-    )
+        <div>
+            Landing Page
+        </div>
+    );
 }
 
 export default LandingPage

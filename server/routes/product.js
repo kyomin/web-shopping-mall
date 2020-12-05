@@ -23,6 +23,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }).single('file');
 
+// 서버 스토리지(root 디렉토리의 upload 폴더)에 이미지 저장
 router.post('/image', (req, res) => {
     // 프론트에서 가져온 이미지를 저장해 준다.
     upload(req, res, err => {
@@ -32,6 +33,7 @@ router.post('/image', (req, res) => {
     });
 });
 
+// 상품 업로드
 router.post('/', (req, res) => {
     // 받아온 정보들을 데이터베이스에 넣어준다.
     const product = new Product(req.body);
@@ -41,6 +43,20 @@ router.post('/', (req, res) => {
 
         return res.status(200).json({ success: true });
     });
+});
+
+// 전체 상품 가져오기
+router.post('/products', (req, res) => {
+    // 몽고디비의 product collection에 들어 있는 모든 상품 정보를 가져온다.
+    // find의 인자로 조건을 넣지 않으면 모든 정보를 긁어 온다.
+    // populate 함수를 통해 writer가 ref하는 collection의 정보도 긁어온다.
+    Product.find()
+    .populate("writer")
+    .exec((err, productInfos) => {
+        if(err) return res.status(400).json({ success: false, err });
+
+        return res.status(200).json({ success: true, productInfos });
+    })
 });
 
 module.exports = router;
