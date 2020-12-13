@@ -47,15 +47,26 @@ router.post('/', (req, res) => {
 
 // 전체 상품 가져오기
 router.post('/products', (req, res) => {
-    // 몽고디비의 product collection에 들어 있는 모든 상품 정보를 가져온다.
-    // find의 인자로 조건을 넣지 않으면 모든 정보를 긁어 온다.
-    // populate 함수를 통해 writer가 ref하는 collection의 정보도 긁어온다.
+    /*
+        몽고디비의 product collection에 들어 있는 모든 상품 정보를 가져온다.
+        find의 인자로 조건을 넣지 않으면 모든 정보를 긁어 온다.
+        populate 함수를 통해 writer가 ref하는 collection의 정보도 긁어온다.
+    */
+    const limit = req.body.limit ? parseInt(req.body.limit) : 100;  // front에서 limit 값을 지정해 줬다면 해당 값을 사용, 안 했다면 100개를 limit으로 정한다.
+    const skip = req.body.skip ? parseInt(req.body.skip) : 0;
+
     Product.find()
     .populate("writer")
+    .skip(skip)
+    .limit(limit)
     .exec((err, productInfos) => {
         if(err) return res.status(400).json({ success: false, err });
 
-        return res.status(200).json({ success: true, productInfos });
+        return res.status(200).json({ 
+            success: true, 
+            productInfos,
+            postSize: productInfos.length
+        });
     })
 });
 

@@ -1,22 +1,39 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import swal from 'sweetalert';
-import { Typography, Icon, Col, Card, Row } from 'antd';
+import { Typography, Icon, Col, Card, Row, Button } from 'antd';
 import Meta from 'antd/lib/card/Meta';
 import ImageSlider from '../../utils/ImageSlider';
 import { numberWith3digitCommas } from '../../../utils/functions';
+import { MORE_BTN_LIMIT } from '../../../utils/constants';
 
-const { Title } = Typography;
+const { Title } = Typography
 
 function LandingPage() {
     const [products, setProducts] = useState([]);
+    const [skip, setSkip] = useState(0);
+    const [postSize, setPostSize] = useState(8)
 
     useEffect(() => {
+        const requestBody = {
+            skip,
+            limit: MORE_BTN_LIMIT
+        };
 
-        axios.post('/api/product/products')
+        getProducts(requestBody);
+    }, []); 
+
+    const getProducts = (requestBody) => {
+        axios.post('/api/product/products', requestBody)
         .then((res) => {
             if(res.data.success){
-                setProducts(res.data.productInfos);
+                if(requestBody.loadMore){
+                    setProducts([...products, ...res.data.productInfos]);
+                } else{
+                    setProducts(res.data.productInfos);
+                }
+
+                setPostSize(res.data.postSize);
             } else{
                 swal('', '상품 정보들을 가져오는데 실패 했습니다.', 'error');
             }
@@ -25,8 +42,20 @@ function LandingPage() {
             console.error(err);
             swal('', '상품 정보들을 가져오는데 실패 했습니다.', 'error');
         });
+    }
 
-    }, []);
+    const handleMoreBtn = () => {
+        const newSkip = skip + MORE_BTN_LIMIT;
+
+        const requestBody = {
+            skip: newSkip,
+            limit: MORE_BTN_LIMIT,
+            loadMore: true
+        };
+
+        getProducts(requestBody);
+        setSkip(newSkip);           // skip 상태 갱신
+    }
 
     const renderProducts = () => {
         return products.map((product, idx) => {
@@ -45,8 +74,8 @@ function LandingPage() {
 
     return (
         <div style={{ width: '75%', margin: '3rem auto' }} >
-            <div style={{ textAlign: 'center' }}>
-                <Title level={2}> All Products <Icon type='rocket' /> </Title>
+            <div style={{ textAlign: 'center', marginBottom: '3%' }}>
+                <Title level={1}> 전체 상품 <Icon type='rocket' /> </Title>
             </div>
 
             {/* Filter */}
@@ -58,9 +87,11 @@ function LandingPage() {
                 {renderProducts()}
             </Row>
 
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <button>더보기</button>
-            </div>
+            {postSize >= MORE_BTN_LIMIT && 
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }}>
+                    <Button type="primary" onClick={handleMoreBtn}>더보기</Button>
+                </div>
+            }
         </div>
     );
 }

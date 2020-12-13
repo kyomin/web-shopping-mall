@@ -10,7 +10,7 @@ function ImageSlider(props) {
                     return (
                         <div key={idx}>
                             <img 
-                                style={{ width: '100%', maxHeight: '150px' }}
+                                style={{ width: '100%', height: '300px' }}
                                 src={`${BACK_URL}/${image}`}
                             />
                         </div>
