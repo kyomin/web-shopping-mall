@@ -3,7 +3,7 @@ import axios from 'axios';
 import swal from 'sweetalert';
 import { Typography, Icon, Col, Card, Row } from 'antd';
 import Meta from 'antd/lib/card/Meta';
-import { BACK_URL } from '../../../utils/constants';
+import ImageSlider from '../../utils/ImageSlider';
 import { numberWith3digitCommas } from '../../../utils/functions';
 
 const { Title } = Typography;
@@ -32,12 +32,7 @@ function LandingPage() {
         return products.map((product, idx) => {
             return (
                 <Col lg={6} md={8} xs={24} key={idx}>
-                    <Card
-                        cover={<img 
-                            style={{ width: '100%', maxHeight: '150px' }}
-                            src={`${BACK_URL}/${product.images[0]}`} 
-                        />}
-                    >
+                    <Card cover={ <ImageSlider images={product.images} />} >
                         <Meta 
                             title={product.title}
                             description={`${numberWith3digitCommas(product.price)}원`}
