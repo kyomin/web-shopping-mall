@@ -5,8 +5,9 @@ import { Typography, Icon, Col, Card, Row, Button } from 'antd';
 import Meta from 'antd/lib/card/Meta';
 import ImageSlider from '../../utils/ImageSlider';
 import Classifications from './Sections/Classifications';
+import Price from './Sections/Price';
 import { numberWith3digitCommas } from '../../../utils/functions';
-import { classifications, more_btn_limit } from './Sections/Datas';
+import { classifications, price, more_btn_limit } from './Sections/Datas';
 
 const { Title } = Typography
 
@@ -88,11 +89,30 @@ function LandingPage() {
         setSkip(0);
     }
 
+    const handlePrice = (value) => {
+        const data = price;
+        let arr = [];
+
+        for(let key in data) {
+            if(data[key].id === parseInt(value, 10)){
+                arr = data[key].array;
+            }
+        }
+        
+        return arr;
+    }
+
     const handleFilters = (filter, category) => {
         const newFilters = { ...filters };
         newFilters[category] = filter;
 
+        if(category === 'price'){
+            const priceValue = handlePrice(filter);
+            newFilters[category] = priceValue;
+        }
+
         showFilteredResults(newFilters);
+        setFilters(newFilters);
     }
 
     return (
@@ -102,14 +122,22 @@ function LandingPage() {
             </div>
 
             {/* Filter */}
-
-            {/* Check Box */}
-            <Classifications 
-                list={classifications} 
-                handleFilters={(filter) => handleFilters(filter, 'classification')}
-            />
-
-            {/* Radio Box */}
+            <Row gutter={[16, 16]}>
+                <Col lg={12} xs={24}>
+                    {/* Check Box */}
+                    <Classifications 
+                        list={classifications} 
+                        handleFilters={(filter) => handleFilters(filter, 'classification')}
+                    />
+                </Col>
+                <Col lg={12} xs={24}>
+                    {/* Radio Box */}
+                    <Price 
+                        list={price} 
+                        handleFilters={(filter) => handleFilters(filter, 'price')}
+                    />
+                </Col>
+            </Row>
 
             {/* Search */}
 
@@ -118,6 +146,7 @@ function LandingPage() {
                 {renderProducts()}
             </Row>
 
+            {/* 가져온 것이 more 버튼이 가져오는 개수보다 적으면 끝까지 다 긁어온 것이다. */}
             {postSize >= more_btn_limit && 
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }}>
                     <Button type="primary" onClick={handleMoreBtn}>더보기</Button>

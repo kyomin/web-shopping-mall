@@ -59,18 +59,37 @@ router.post('/products', (req, res) => {
     // filters object의 key를 순회한다.
     for(let key in req.body.filter){
         if(req.body.filter[key].length > 0){
-            findArgs[key] = req.body.filter[key];
+
+            if(key === 'price'){
+                /*
+                    $gte : greater than equal => 해당 값보다 크거나 같고
+                    $lte : less than equal => 해당 값보다 작거나 같은
+
+                    위의 두 문법은 MongoDB에서 제공하는 쿼리 문법이다.
+                */
+                findArgs[key] = {
+                    $gte: req.body.filter[key][0],
+                    $lte: req.body.filter[key][1]
+                }
+            } else {
+                // classifications key를 위한 것!
+                findArgs[key] = req.body.filter[key];
+            }
         }
     }
 
-   /*
+    /*
         findArgs : {
             classifications: [ clicked factors ],
-            price: [ clicked factors ]
+            price: {
+                $gte: req.body.filter[key][0],
+                $lte: req.body.filter[key][1]
+            }
         }
 
         find 인자로 해당 값을 넣으면,
         classifications 원소 중에 맞는 것이 있다면 긁어온다(OR).
+        price에서는 $gte <= x <= $lte를 만족하는 x 값을 긁어온다.
     */
     Product.find(findArgs)
     .populate("writer")
