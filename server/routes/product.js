@@ -54,8 +54,25 @@ router.post('/products', (req, res) => {
     */
     const limit = req.body.limit ? parseInt(req.body.limit) : 100;  // front에서 limit 값을 지정해 줬다면 해당 값을 사용, 안 했다면 100개를 limit으로 정한다.
     const skip = req.body.skip ? parseInt(req.body.skip) : 0;
+    const findArgs = {};
 
-    Product.find()
+    // filters object의 key를 순회한다.
+    for(let key in req.body.filter){
+        if(req.body.filter[key].length > 0){
+            findArgs[key] = req.body.filter[key];
+        }
+    }
+
+   /*
+        findArgs : {
+            classifications: [ clicked factors ],
+            price: [ clicked factors ]
+        }
+
+        find 인자로 해당 값을 넣으면,
+        classifications 원소 중에 맞는 것이 있다면 긁어온다(OR).
+    */
+    Product.find(findArgs)
     .populate("writer")
     .skip(skip)
     .limit(limit)
@@ -67,7 +84,7 @@ router.post('/products', (req, res) => {
             productInfos,
             postSize: productInfos.length
         });
-    })
+    });
 });
 
 module.exports = router;

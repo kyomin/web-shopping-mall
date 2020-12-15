@@ -4,20 +4,25 @@ import swal from 'sweetalert';
 import { Typography, Icon, Col, Card, Row, Button } from 'antd';
 import Meta from 'antd/lib/card/Meta';
 import ImageSlider from '../../utils/ImageSlider';
+import Classifications from './Sections/Classifications';
 import { numberWith3digitCommas } from '../../../utils/functions';
-import { MORE_BTN_LIMIT } from '../../../utils/constants';
+import { classifications, more_btn_limit } from './Sections/Datas';
 
 const { Title } = Typography
 
 function LandingPage() {
     const [products, setProducts] = useState([]);
     const [skip, setSkip] = useState(0);
-    const [postSize, setPostSize] = useState(8)
+    const [postSize, setPostSize] = useState(8);
+    const [filters, setFilters] = useState({
+        classifications: [],
+        price: []
+    });
 
     useEffect(() => {
         const requestBody = {
             skip,
-            limit: MORE_BTN_LIMIT
+            limit: more_btn_limit
         };
 
         getProducts(requestBody);
@@ -45,11 +50,11 @@ function LandingPage() {
     }
 
     const handleMoreBtn = () => {
-        const newSkip = skip + MORE_BTN_LIMIT;
+        const newSkip = skip + more_btn_limit;
 
         const requestBody = {
             skip: newSkip,
-            limit: MORE_BTN_LIMIT,
+            limit: more_btn_limit,
             loadMore: true
         };
 
@@ -72,6 +77,24 @@ function LandingPage() {
         });
     }
 
+    const showFilteredResults = (filter) => {
+        const requestBody = {
+            skip: 0,
+            limit: more_btn_limit,
+            filter
+        };
+
+        getProducts(requestBody);
+        setSkip(0);
+    }
+
+    const handleFilters = (filter, category) => {
+        const newFilters = { ...filters };
+        newFilters[category] = filter;
+
+        showFilteredResults(newFilters);
+    }
+
     return (
         <div style={{ width: '75%', margin: '3rem auto' }} >
             <div style={{ textAlign: 'center', marginBottom: '3%' }}>
@@ -80,6 +103,14 @@ function LandingPage() {
 
             {/* Filter */}
 
+            {/* Check Box */}
+            <Classifications 
+                list={classifications} 
+                handleFilters={(filter) => handleFilters(filter, 'classification')}
+            />
+
+            {/* Radio Box */}
+
             {/* Search */}
 
             {/* Cards */}
@@ -87,7 +118,7 @@ function LandingPage() {
                 {renderProducts()}
             </Row>
 
-            {postSize >= MORE_BTN_LIMIT && 
+            {postSize >= more_btn_limit && 
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }}>
                     <Button type="primary" onClick={handleMoreBtn}>더보기</Button>
                 </div>
