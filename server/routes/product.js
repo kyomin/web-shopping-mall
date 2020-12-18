@@ -54,6 +54,7 @@ router.post('/products', (req, res) => {
     */
     const limit = req.body.limit ? parseInt(req.body.limit) : 100;  // front에서 limit 값을 지정해 줬다면 해당 값을 사용, 안 했다면 100개를 limit으로 정한다.
     const skip = req.body.skip ? parseInt(req.body.skip) : 0;
+    const term = req.body.searchTerm;
     const findArgs = {};
 
     // filters object의 key를 순회한다.
@@ -78,32 +79,49 @@ router.post('/products', (req, res) => {
         }
     }
 
-    /*
-        findArgs : {
-            classifications: [ clicked factors ],
-            price: {
-                $gte: req.body.filter[key][0],
-                $lte: req.body.filter[key][1]
-            }
-        }
+    if(term){       // front에서 검색어를 입력해서 term이 넘어온 상황이라면
+        Product.find(findArgs)
+        .find({ $text: { $search: term } })     // $text는 텍스트 인덱스로 인덱싱 된 필드의 내용에 대해 텍스트 검색을 수행한다. 어느 필드를 대상으로 할 지는 모델 설계 시에 컨트롤해 준다.
+        .populate("writer")
+        .skip(skip)
+        .limit(limit)
+        .exec((err, productInfos) => {
+            if(err) return res.status(400).json({ success: false, err });
 
-        find 인자로 해당 값을 넣으면,
-        classifications 원소 중에 맞는 것이 있다면 긁어온다(OR).
-        price에서는 $gte <= x <= $lte를 만족하는 x 값을 긁어온다.
-    */
-    Product.find(findArgs)
-    .populate("writer")
-    .skip(skip)
-    .limit(limit)
-    .exec((err, productInfos) => {
-        if(err) return res.status(400).json({ success: false, err });
-
-        return res.status(200).json({ 
-            success: true, 
-            productInfos,
-            postSize: productInfos.length
+            return res.status(200).json({ 
+                success: true, 
+                productInfos,
+                postSize: productInfos.length
+            });
         });
-    });
+    } else {
+        /*
+            findArgs : {
+                classifications: [ clicked factors ],
+                price: {
+                    $gte: req.body.filter[key][0],
+                    $lte: req.body.filter[key][1]
+                }
+            }
+
+            find 인자로 해당 값을 넣으면,
+            classifications 원소 중에 맞는 것이 있다면 긁어온다(OR).
+            price에서는 $gte <= x <= $lte를 만족하는 x 값을 긁어온다.
+        */
+        Product.find(findArgs)
+        .populate("writer")
+        .skip(skip)
+        .limit(limit)
+        .exec((err, productInfos) => {
+            if(err) return res.status(400).json({ success: false, err });
+
+            return res.status(200).json({ 
+                success: true, 
+                productInfos,
+                postSize: productInfos.length
+            });
+        });
+    }
 });
 
 module.exports = router;

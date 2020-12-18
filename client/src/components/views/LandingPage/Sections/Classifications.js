@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { Collapse, Checkbox } from 'antd';
 
 const { Panel } = Collapse;

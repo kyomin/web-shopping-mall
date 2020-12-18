@@ -35,6 +35,23 @@ const productSchema = mongoose.Schema({
     }
 }, { timestamps: true });
 
+/* 
+    title 필드,  
+    description 필드를
+    검색어에 걸리는 대상으로 설정한다.
+
+    weights를 통해 어떤 필드에 검색어가 우선적으로 걸리게 할지 컨트롤한다.
+*/
+productSchema.index({
+    title: 'text',
+    description: 'text'
+}, {
+    weights: {
+        title: 5,
+        description:1
+    }
+});
+
 const Product = mongoose.model('Product', productSchema);
 
 module.exports = { Product }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { Carousel } from 'antd';
 import { BACK_URL } from '../../utils/constants';
 

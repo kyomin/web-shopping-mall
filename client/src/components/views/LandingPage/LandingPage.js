@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import swal from 'sweetalert';
 import { Typography, Icon, Col, Card, Row, Button } from 'antd';
@@ -6,6 +6,7 @@ import Meta from 'antd/lib/card/Meta';
 import ImageSlider from '../../utils/ImageSlider';
 import Classifications from './Sections/Classifications';
 import Price from './Sections/Price';
+import SearchFeature from './Sections/SearchFeature';
 import { numberWith3digitCommas } from '../../../utils/functions';
 import { classifications, price, more_btn_limit } from './Sections/Datas';
 
@@ -19,6 +20,7 @@ function LandingPage() {
         classifications: [],
         price: []
     });
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         const requestBody = {
@@ -115,6 +117,19 @@ function LandingPage() {
         setFilters(newFilters);
     }
 
+    const updateSearchTerm = (newSearchTerm) => {
+        const requestBody = {
+            skip: 0,
+            limit: more_btn_limit,
+            filter: filters,     // 현재 어느 필터가 눌려져 있는 부분인지도 고려하기 위해서!
+            searchTerm: newSearchTerm
+        };
+
+        setSearchTerm(newSearchTerm);
+        getProducts(requestBody);
+        setSkip(0);
+    }
+
     return (
         <div style={{ width: '75%', margin: '3rem auto' }} >
             <div style={{ textAlign: 'center', marginBottom: '3%' }}>
@@ -140,6 +155,11 @@ function LandingPage() {
             </Row>
 
             {/* Search */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '1rem auto' }}>
+                <SearchFeature 
+                    refreshFunction={updateSearchTerm}
+                />
+            </div>
 
             {/* Cards */}
             <Row gutter={[16, 16]}>
