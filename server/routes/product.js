@@ -124,4 +124,25 @@ router.post('/products', (req, res) => {
     }
 });
 
+// 특정 상품의 정보 가져오기
+router.get('/detail', (req, res) => {
+    /*
+        productId를 이용해 DB에서 productId에 일치하는 상품의 정보를 가져온다.
+        post 요청의 경우에는 Request 객체의 body에 정보를 실어 보내지만,
+        get 요청의 경우에는 body가 없고 다음과 같이 url에 정보를 실어 보내므로 query를 이용해 파싱해야 한다.
+        
+        /api/product/detail?id=${productId}&type=single
+    */
+    const productId = req.query.id;
+    const type = req.query.type;
+
+    Product.find({ _id: productId })
+    .populate('writer')
+    .exec((err, productInfo) => {
+        if(err) return res.status(400).send({ success: false, err });
+
+        return res.status(200).send({ success:true, productInfo });
+    });
+});
+
 module.exports = router;
