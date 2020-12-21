@@ -14,7 +14,6 @@ function ProductDetailPage(props) {
         axios.get(`/api/product/detail?id=${productId}&type=single`)
         .then((res) => {
             if(res.data.success){
-                console.log('product info : ', res.data);
                 setProduct(res.data.productInfo[0]);
             } else {
                 swal('', '해당 상품의 상세 정보를 가져오는데 실패 했습니다.', 'error');

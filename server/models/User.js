@@ -22,21 +22,29 @@ const userSchema = mongoose.Schema({
         type:String,
         maxlength: 50
     },
-    role : {
+    role: {
         type:Number,
         default: 0 
     },
     image: String,
-    token : {
+    token: {
         type: String,
     },
-    tokenExp :{
+    tokenExp:{
         type: Number
+    },
+    cart: {
+        type: Array,
+        default: []
+    },
+    history: {
+        type: Array,
+        default: []
     }
 });
 
 userSchema.pre('save', function( next ) {
-    var user = this;
+    const user = this;
     
     if(user.isModified('password')){    
         // console.log('password changed')
@@ -45,46 +53,44 @@ userSchema.pre('save', function( next ) {
     
             bcrypt.hash(user.password, salt, function(err, hash){
                 if(err) return next(err);
-                user.password = hash 
-                next()
-            })
-        })
+                user.password = hash ;
+                next();
+            });
+        });
     } else {
-        next()
+        next();
     }
 });
 
 userSchema.methods.comparePassword = function(plainPassword,cb){
-    bcrypt.compare(plainPassword, this.password, function(err, isMatch){
+    bcrypt.compare(plainPassword, this.password, function(err, isMatch) {
         if (err) return cb(err);
-        cb(null, isMatch)
-    })
+        cb(null, isMatch);
+    });
 }
 
 userSchema.methods.generateToken = function(cb) {
-    var user = this;
-    console.log('user',user)
-    console.log('userSchema', userSchema)
-    var token =  jwt.sign(user._id.toHexString(),'secret')
-    var oneHour = moment().add(1, 'hour').valueOf();
+    const user = this;
+    const token =  jwt.sign(user._id.toHexString(),'secret');
+    const oneHour = moment().add(1, 'hour').valueOf();
 
     user.tokenExp = oneHour;
     user.token = token;
     user.save(function (err, user){
-        if(err) return cb(err)
+        if(err) return cb(err);
         cb(null, user);
-    })
+    });
 }
 
 userSchema.statics.findByToken = function (token, cb) {
-    var user = this;
+    const user = this;
 
-    jwt.verify(token,'secret',function(err, decode){
+    jwt.verify(token,'secret',function(err, decode) {
         user.findOne({"_id":decode, "token":token}, function(err, user){
             if(err) return cb(err);
             cb(null, user);
-        })
-    })
+        });
+    });
 }
 
 const User = mongoose.model('User', userSchema);

@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const { User } = require("../models/User");
-
 const { auth } = require("../middleware/auth");
 
 //=================================
@@ -18,11 +17,12 @@ router.get("/auth", auth, (req, res) => {
         lastname: req.user.lastname,
         role: req.user.role,
         image: req.user.image,
+        cart: req.user.cart,
+        history: req.user.history
     });
 });
 
 router.post("/register", (req, res) => {
-
     const user = new User(req.body);
 
     user.save((err, doc) => {
@@ -42,18 +42,17 @@ router.post("/login", (req, res) => {
             });
 
         user.comparePassword(req.body.password, (err, isMatch) => {
-            if (!isMatch)
-                return res.json({ loginSuccess: false, message: "Wrong password" });
+            if (!isMatch) return res.json({ loginSuccess: false, message: "Wrong password" });
 
             user.generateToken((err, user) => {
                 if (err) return res.status(400).send(err);
                 res.cookie("w_authExp", user.tokenExp);
                 res
-                    .cookie("w_auth", user.token)
-                    .status(200)
-                    .json({
-                        loginSuccess: true, userId: user._id
-                    });
+                .cookie("w_auth", user.token)
+                .status(200)
+                .json({
+                    loginSuccess: true, userId: user._id
+                });
             });
         });
     });
@@ -65,6 +64,67 @@ router.get("/logout", auth, (req, res) => {
         return res.status(200).send({
             success: true
         });
+    });
+});
+
+router.post("/addToCart", auth, (req, res) => {
+   // User Collection에서 해당 유저의 정보를 가져오기
+    User.findOne({ _id: req.user._id }, (err, userInfo) => {
+        // 가져온 정보에서 카트에다 넣으려 하는 상품이 이미 들어 있는지 확인
+        const productId = req.body.productId;
+        let duplicate = false;
+
+        userInfo.cart.forEach((item) => {
+            if(item.id === productId) {
+                duplicate = true;
+            }
+        });
+
+        // 상품이 이미 있을 때는 해당 상품을 찾아 수량을 1 증가!
+        if(duplicate){
+            /*
+                다수의 유저 정보 중에서 지금의 유저 정보를 찾고, cart 필드의 상품 id를 찾는다.
+                그 후 cart 필드(array)의 특정된 원소(상품 정보)의 quantity를 1 증가 시킨다.
+                new: true 옵션은 업데이트 된 정보의 결과 값을 받아 콜백 함수를 실행한다는 뜻이다.
+                
+                * array 필드 내의 특정 원소를 찾고, 바꾸는 과정이 생소할 수 있으니 주의해야 한다!
+            */
+            User.findOneAndUpdate(
+                { _id: req.user._id, 'cart.id': productId },
+                { $inc: { 'cart.$.quantity': 1 } },
+                { new: true },
+                (err, userInfo) => {
+                    if(err) return res.status(400).json({ success: false, err });
+
+                    res.status(200).send(userInfo.cart);
+                }
+            );
+        }
+        // 상품이 이미 있지 않을 때는 해당 상품을 배열에 등록!
+        else {
+            /*
+                다수의 유저 정보 중에서 지금의 유저 정보를 찾는다.
+                그 후, $push 옵션을 통해 해당 유저의 cart 필드(array 타입)에 정보를 넣어준다.
+            */
+            User.findOneAndUpdate(
+                { _id: req.user._id },
+                {  
+                    $push: {
+                        cart: {
+                            id: productId,
+                            quantity: 1,
+                            date: Date.now()
+                        }
+                    }
+                },
+                { new: true },
+                (err, userInfo) => {
+                    if(err) return res.status(400).json({ success: false, err });
+
+                    res.status(200).send(userInfo.cart);
+                }
+            );
+        }
     });
 });
 
