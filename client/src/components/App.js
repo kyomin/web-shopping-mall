@@ -10,6 +10,7 @@ import LoginPage from './views/LoginPage/LoginPage.js';
 import RegisterPage from './views/RegisterPage/RegisterPage.js';
 import UploadProductPage from './views/UploadProductPage/UploadProductPage';
 import ProductDetailPage from './views/ProductDetailPage/ProductDetailPage';
+import CartPage from './views/CartPage/CartPage';
 
 /*
   null   Anyone Can go inside
@@ -27,6 +28,7 @@ function App() {
           <Route exact path="/register" component={Auth(RegisterPage, false)} />
           <Route exact path="/product/upload" component={Auth(UploadProductPage, true)} />
           <Route exact path="/product/:productId" component={Auth(ProductDetailPage, null)} />
+          <Route exact path="/user/cart" component={Auth(CartPage, true)} />
         </Switch>
       </div>
       <Footer />
