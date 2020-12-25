@@ -131,17 +131,29 @@ router.get('/detail', (req, res) => {
         post 요청의 경우에는 Request 객체의 body에 정보를 실어 보내지만,
         get 요청의 경우에는 body가 없고 다음과 같이 url에 정보를 실어 보내므로 query를 이용해 파싱해야 한다.
         
-        /api/product/detail?id=${productId}&type=single
+        1) /api/product/detail?id=${productId}&type=single
+        2) /api/product/detail?id=${cartItems}&type=array
     */
-    const productId = req.query.id;
+    let productIds = req.query.id;
     const type = req.query.type;
 
-    Product.find({ _id: productId })
+    if(type === 'array') {
+        /*
+            cartItems = "1,2,3" 이렇게 온 거를
+            ['1', '2', '3'] 이런 format으로 바꿔준다.
+        */
+        const ids = req.query.id.split(',');
+        productIds = ids.map(item => {
+            return item;
+        });
+    }
+
+    Product.find({ _id: { $in: productIds } })
     .populate('writer')
-    .exec((err, productInfo) => {
+    .exec((err, productInfos) => {
         if(err) return res.status(400).send({ success: false, err });
 
-        return res.status(200).send({ success:true, productInfo });
+        return res.status(200).json({ success:true, productInfos });
     });
 });
 
