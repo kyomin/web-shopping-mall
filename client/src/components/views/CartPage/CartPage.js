@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getCartItems } from '../../../actions/user_actions';
+import UserCardBlock from './Sections/UserCardBlock';
 
 function CartPage(props) {
     const dispatch = useDispatch();
@@ -23,11 +24,23 @@ function CartPage(props) {
 
     }, [props.user.userData]);
 
-    return (
-        <div>
-            CartPage
-        </div>
-    );
+    if(props.user.cartDetail) {
+        return (
+            <div style={{ width: '85%', margin: '3rem auto' }}>
+                <h1>장바구니</h1>
+
+                <div>
+                    <UserCardBlock products={props.user.cartDetail.productInfos} />
+                </div>
+            </div>
+        );
+    } else {
+        return (
+            <div>
+                loading...
+            </div>
+        );
+    }
 }
 
 export default CartPage
