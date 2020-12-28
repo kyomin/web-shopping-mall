@@ -4,7 +4,8 @@ import {
     AUTH_USER,
     LOGOUT_USER,
     ADD_TO_CART,
-    GET_CART_ITEMS
+    GET_CART_ITEMS,
+    REMOVE_CART_ITEM
 } from '../actions/types';
  
 export default function(state={}, action){
@@ -29,6 +30,15 @@ export default function(state={}, action){
             return { 
                 ...state,
                 cartDetail: action.payload
+            }
+        case REMOVE_CART_ITEM:
+            return {
+                ...state,
+                cartDetail: action.payload.productInfos,
+                userData: {                 
+                    ...state.userData,      // state 안에 원래 있던 userData를 뿌려준다.
+                    cart: action.payload.cart    // 그 후 여기에 cart 속성을 추가해준다!
+                }
             }
         default:
             return state;

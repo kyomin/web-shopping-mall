@@ -148,6 +148,9 @@ router.get('/detail', (req, res) => {
         });
     }
 
+    /* 
+        ['1', '2', '3'] 이런 식의 배열에 속하는 id를 가진 조건의 데이터를 가져온다.
+    */
     Product.find({ _id: { $in: productIds } })
     .populate('writer')
     .exec((err, productInfos) => {

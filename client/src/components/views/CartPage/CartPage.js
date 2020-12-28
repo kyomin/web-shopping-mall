@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { getCartItems } from '../../../actions/user_actions';
+import { getCartItems, removeCartItem } from '../../../actions/user_actions';
 import UserCardBlock from './Sections/UserCardBlock';
 import { numberWith3digitCommas } from '../../../utils/functions';
 
@@ -40,13 +40,20 @@ function CartPage(props) {
         setTotalAmount(total);
     }
 
+    const removeFromCart = (productId) => {
+        dispatch(removeCartItem(productId));
+    }
+
     if(props.user.cartDetail) {
         return (
             <div style={{ width: '85%', margin: '3rem auto' }}>
                 <h1>장바구니</h1>
 
                 <div>
-                    <UserCardBlock products={props.user.cartDetail} />
+                    <UserCardBlock 
+                        products={props.user.cartDetail}
+                        removeItem={removeFromCart}
+                    />
                 </div>
 
                 <div style={{ marginTop: '3rem' }}>

@@ -39,7 +39,7 @@ function UserCardBlock(props) {
 
                         {/* 삭제 버튼 */}
                         <td>
-                            <button>
+                            <button onClick={() => props.removeItem(product._id)}>
                                 삭제
                             </button>
                         </td>
