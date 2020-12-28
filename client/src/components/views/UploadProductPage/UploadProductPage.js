@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Typography, Button, Form, Input } from 'antd';
 import axios from 'axios';
-import swal from 'sweetalert';
 import FileUpload from '../../utils/FileUpload';
 
 const { Title } = Typography;
@@ -48,7 +47,7 @@ function UploadProductPage(props) {
 
         /* validation check! */
         if(!title || !description || !price || !classification || !images.length){
-            swal('', '모든 값을 채워 넣어주셔야 합니다!', 'error');
+            alert('모든 값을 채워 넣어주셔야 합니다!');
             return;
         }
 
@@ -66,17 +65,15 @@ function UploadProductPage(props) {
         axios.post("/api/product", requestData)
         .then((res) => {
             if(res.data.success){
-                swal('', '상품 업로드에 성공했습니다.', 'success')
-                .then(() => {
-                    props.history.push('/');
-                });
+                alert('상품 업로드에 성공했습니다.');
+                props.history.push('/');
             } else {
-                swal('', '상품 업로드에 실패했습니다.', 'error');
+                alert('상품 업로드에 실패했습니다.');
             }
         })
         .catch((err) => {
             console.error(err);
-            swal('', '상품 업로드에 실패했습니다.', 'error');
+            alert('상품 업로드에 실패했습니다.');
         });
     }
 

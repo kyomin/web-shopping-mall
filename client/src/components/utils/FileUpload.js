@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Dropzone from 'react-dropzone';
 import { Icon } from 'antd';
 import axios from 'axios';
-import swal from 'sweetalert';
 import { BACK_URL } from '../../utils/constants';
 
 function FileUpload(props) {
@@ -22,11 +21,12 @@ function FileUpload(props) {
                 setImages([...images, res.data.filePath]);
                 props.refreshFunction([...images, res.data.filePath]);
             } else {
-                swal('', '이미지 파일을 서버에 저장하는데 실패했습니다.', 'error');
+                alert('이미지 파일을 서버에 저장하는데 실패했습니다.');
             }
         })
         .catch((err) => {
             console.error(err);
+            alert('이미지 파일을 서버에 저장하는데 실패했습니다.');
         })
     }
 

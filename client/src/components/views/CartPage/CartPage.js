@@ -30,7 +30,7 @@ function CartPage(props) {
                 <h1>장바구니</h1>
 
                 <div>
-                    <UserCardBlock products={props.user.cartDetail.productInfos} />
+                    <UserCardBlock products={props.user.cartDetail} />
                 </div>
             </div>
         );

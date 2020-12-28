@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import swal from 'sweetalert';
 import { Row, Col } from 'antd';
 import ProductImage from './Sections/ProductImage';
 import ProductInfo from './Sections/ProductInfo';
@@ -13,12 +12,11 @@ function ProductDetailPage(props) {
     useEffect(() => {
         axios.get(`/api/product/detail?id=${productId}&type=single`)
         .then((res) => {
-            if(res.data.success){
-                setProduct(res.data.productInfo[0]);
-            } else {
-                swal('', '해당 상품의 상세 정보를 가져오는데 실패 했습니다.', 'error');
-            }
+            setProduct(res.data[0]);
         })
+        .catch((err) => {
+            alert(err);
+        });
     }, []);
 
     return (

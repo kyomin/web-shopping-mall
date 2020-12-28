@@ -24,6 +24,8 @@ function ProductInfo(props) {
 
         // 필요한 정보를 User 모델의 cart 필드에 넣어 준다.
         await dispatch(addToCart(product._id));
+
+        alert('장바구니에 상품이 담겼습니다.');
     }
 
     if(!isEmptyObject(product)) {

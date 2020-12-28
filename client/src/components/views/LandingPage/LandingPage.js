@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import swal from 'sweetalert';
 import { Typography, Icon, Col, Card, Row, Button } from 'antd';
 import Meta from 'antd/lib/card/Meta';
 import ImageSlider from '../../utils/ImageSlider';
@@ -43,12 +42,12 @@ function LandingPage() {
 
                 setPostSize(res.data.postSize);
             } else{
-                swal('', '상품 정보들을 가져오는데 실패 했습니다.', 'error');
+                alert('상품 정보들을 가져오는데 실패 했습니다.');
             }
         })
         .catch((err) => {
             console.error(err);
-            swal('', '상품 정보들을 가져오는데 실패 했습니다.', 'error');
+            alert('상품 정보들을 가져오는데 실패 했습니다.');
         });
     }
 

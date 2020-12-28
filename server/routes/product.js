@@ -153,7 +153,7 @@ router.get('/detail', (req, res) => {
     .exec((err, productInfos) => {
         if(err) return res.status(400).send({ success: false, err });
 
-        return res.status(200).json({ success:true, productInfos });
+        return res.status(200).send(productInfos);
     });
 });
 

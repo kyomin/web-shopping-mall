@@ -1,5 +1,6 @@
 import React from 'react';
-import { BACK_URL } from '../../../../utils/constants'
+import { BACK_URL } from '../../../../utils/constants';
+import { numberWith3digitCommas } from '../../../../utils/functions';
 import './UserCardBlock.css';
 
 function UserCardBlock(props) {
@@ -33,7 +34,7 @@ function UserCardBlock(props) {
                         
                         {/* 상품 가격 */}
                         <td>
-                            {product.price} 원
+                            {numberWith3digitCommas(product.price)} 원
                         </td>
 
                         {/* 삭제 버튼 */}
