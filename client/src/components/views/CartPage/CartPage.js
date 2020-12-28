@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { getCartItems } from '../../../actions/user_actions';
 import UserCardBlock from './Sections/UserCardBlock';
+import { numberWith3digitCommas } from '../../../utils/functions';
 
 function CartPage(props) {
+    const [totalAmount, setTotalAmount] = useState(0);
+
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -18,11 +21,24 @@ function CartPage(props) {
                 });
 
                 // axios 대신에 리덕스 dispatch로 요청을 보낸다.
-                dispatch(getCartItems(cartItems, props.user.userData.cart));
+                dispatch(getCartItems(cartItems, props.user.userData.cart))
+                .then((res) => {
+                    calculateTotalAmount(res.payload);
+                });
             }
         }
 
     }, [props.user.userData]);
+
+    const calculateTotalAmount = (cartDetail) => {
+        let total = 0;
+
+        cartDetail.map(item => {
+            total += (parseInt(item.price, 10) * item.quantity);
+        });
+
+        setTotalAmount(total);
+    }
 
     if(props.user.cartDetail) {
         return (
@@ -31,6 +47,10 @@ function CartPage(props) {
 
                 <div>
                     <UserCardBlock products={props.user.cartDetail} />
+                </div>
+
+                <div style={{ marginTop: '3rem' }}>
+                    <h2>총 금액 : {numberWith3digitCommas(totalAmount)}원</h2>
                 </div>
             </div>
         );

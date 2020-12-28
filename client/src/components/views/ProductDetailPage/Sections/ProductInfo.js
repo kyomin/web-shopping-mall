@@ -9,7 +9,7 @@ function ProductInfo(props) {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        setProduct(props.product);
+       setProduct(props.product);
     }, [props.product]);
 
     const clickHandler = async (e) => {
@@ -32,10 +32,11 @@ function ProductInfo(props) {
         return (
             <div>
                 <Descriptions title="상품 상세" bordered>
-                    <Descriptions.Item label="Price">{numberWith3digitCommas(product.price)}원</Descriptions.Item>
-                    <Descriptions.Item label="Sold">{product.sold}</Descriptions.Item>
-                    <Descriptions.Item label="View">{product.views}</Descriptions.Item>
-                    <Descriptions.Item label="Description">{product.description}</Descriptions.Item>    
+                    <Descriptions.Item label="가격">{numberWith3digitCommas(product.price)}원</Descriptions.Item>
+                    <Descriptions.Item label="판매량">{product.sold}</Descriptions.Item>
+                    <Descriptions.Item label="조회수">{product.views}</Descriptions.Item>
+                    <Descriptions.Item label="상품 설명">{product.description}</Descriptions.Item>
+                    <Descriptions.Item label="판매자">{product.writer.name}</Descriptions.Item>    
                 </Descriptions>
 
                 <br />

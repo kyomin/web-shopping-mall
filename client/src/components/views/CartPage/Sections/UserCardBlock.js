@@ -15,9 +15,9 @@ function UserCardBlock(props) {
 
     const renderItems = () => {
         if(props.products) {
-            return props.products.map(product => {
+            return props.products.map((product, idx) => {
                 return (
-                    <tr>
+                    <tr key={idx}>
                         {/* 상품 이미지 */}
                         <td>
                             <img 
