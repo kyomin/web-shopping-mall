@@ -12,6 +12,7 @@ function ImageSlider(props) {
                             <img 
                                 style={{ width: '100%', height: '300px' }}
                                 src={`${BACK_URL}/${image}`}
+                                alt={'상품 이미지'}
                             />
                         </div>
                     );

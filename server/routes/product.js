@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+const clientIp = require('client-ip');
 const { Product } = require('../models/Product');
 
 //=================================
@@ -22,6 +23,14 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage }).single('file');
+
+// Get Client IP
+const getUserIP = (req) => {
+    var IP = clientIp(req);
+    IP = IP.replace(/f/gi, '');
+    IP = IP.replace(/:/gi, '');
+    return IP;
+};
 
 // 서버 스토리지(root 디렉토리의 upload 폴더)에 이미지 저장
 router.post('/image', (req, res) => {
@@ -47,6 +56,8 @@ router.post('/', (req, res) => {
 
 // 전체 상품 가져오기
 router.post('/products', (req, res) => {
+    console.log('다음 클라이언트의 요청 : ', getUserIP(req));
+
     /*
         몽고디비의 product collection에 들어 있는 모든 상품 정보를 가져온다.
         find의 인자로 조건을 넣지 않으면 모든 정보를 긁어 온다.
