@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { Empty } from 'antd';
 import { getCartItems, removeCartItem } from '../../../actions/user_actions';
 import UserCardBlock from './Sections/UserCardBlock';
 import { numberWith3digitCommas } from '../../../utils/functions';
 
 function CartPage(props) {
     const [totalAmount, setTotalAmount] = useState(0);
+    const [showTotal, setShowTotal] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -38,36 +40,41 @@ function CartPage(props) {
         });
 
         setTotalAmount(total);
+        setShowTotal(true);
     }
 
     const removeFromCart = (productId) => {
-        dispatch(removeCartItem(productId));
+        dispatch(removeCartItem(productId))
+        .then((res) => {
+            if(res.payload.productInfos.length <= 0) {
+                setShowTotal(false);
+            }
+        });
     }
 
-    if(props.user.cartDetail) {
-        return (
-            <div style={{ width: '85%', margin: '3rem auto' }}>
-                <h1>장바구니</h1>
+    return (
+        <div style={{ width: '85%', margin: '3rem auto' }}>
+            <h1>장바구니</h1>
 
-                <div>
-                    <UserCardBlock 
-                        products={props.user.cartDetail}
-                        removeItem={removeFromCart}
-                    />
-                </div>
+            <div>
+                <UserCardBlock 
+                    products={props.user.cartDetail && props.user.cartDetail}
+                    removeItem={removeFromCart}
+                />
+            </div>
 
+            {showTotal ? 
                 <div style={{ marginTop: '3rem' }}>
                     <h2>총 금액 : {numberWith3digitCommas(totalAmount)}원</h2>
                 </div>
-            </div>
-        );
-    } else {
-        return (
-            <div>
-                loading...
-            </div>
-        );
-    }
+                :
+                <>
+                    <br />
+                    <Empty description={false} />
+                </>
+            }
+        </div>
+    );
 }
 
 export default CartPage
