@@ -12,7 +12,7 @@ function ProductDetailPage(props) {
     useEffect(() => {
         axios.get(`/api/product/detail?id=${productId}&type=single`)
         .then((res) => {
-            setProduct(res.data[0]);
+            setProduct(res.data);
         })
         .catch((err) => {
             alert(err);

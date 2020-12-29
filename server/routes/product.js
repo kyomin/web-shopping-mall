@@ -146,18 +146,37 @@ router.get('/detail', (req, res) => {
         productIds = ids.map(item => {
             return item;
         });
-    }
 
-    /* 
+        /* 
         ['1', '2', '3'] 이런 식의 배열에 속하는 id를 가진 조건의 데이터를 가져온다.
-    */
-    Product.find({ _id: { $in: productIds } })
-    .populate('writer')
-    .exec((err, productInfos) => {
-        if(err) return res.status(400).send({ success: false, err });
+        */
+        Product.find({ _id: { $in: productIds } })
+        .populate('writer')
+        .exec((err, productInfos) => {
+            if(err) return res.status(400).send({ success: false, err });
 
-        return res.status(200).send(productInfos);
-    });
+            return res.status(200).send(productInfos);
+        });
+    } 
+    // type = single
+    else {
+        Product.findOne({ _id: productIds })
+        .populate('writer')
+        .exec((err, productInfos) => {
+            if(err) return res.status(400).send({ success: false, err });
+
+            // 조회수 1만큼 증가
+            productInfos.views += 1;
+
+            // DB에도 증가된 조회수 반영
+            Product.update( { _id: productIds }, { $set: { views: productInfos.views } } )
+            .exec((err, productInfo) => {
+                if(err) return res.status(400).send({ success: false, err });
+            });
+
+            return res.status(200).send(productInfos);
+        });
+    }
 });
 
 module.exports = router;
